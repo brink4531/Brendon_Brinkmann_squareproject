@@ -12,6 +12,7 @@ public enum UrlType {
 }
 
 public enum Field {
+    case noneSpecified
     case uuid
     case biography
     case email

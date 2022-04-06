@@ -127,7 +127,7 @@ extension ViewController {
         return directory
     }
     
-    public func sort(_ directory: Directory, by field: Field) -> Directory {
+    public func sort(_ directory: Directory, by field: Field = .noneSpecified) -> Directory {
         var employees: [Employee]
         
         switch field {
@@ -139,6 +139,7 @@ extension ViewController {
         case .firstName: employees = directory.employees.sorted { $0.full_name.components(separatedBy: " ").first ?? "" < $1.full_name.components(separatedBy: " ").first ?? "" }; break
         case .lastName: employees = directory.employees.sorted { $0.full_name.components(separatedBy: " ").last ?? "" < $1.full_name.components(separatedBy: " ").last ?? "" }; break
         case .phoneNumber: employees = directory.employees.sorted { $0.phone_number < $1.phone_number }; break
+        case .noneSpecified: employees = directory.employees; break
         }
         
         var directory: Directory = Directory()
@@ -180,6 +181,17 @@ extension ViewController {
     func alert(sort: Bool = false, employeeCard: Int? = nil, errorType: UrlType = .malformed) {
         guard !sort else {
             let sortAlert = UIAlertController(title: "Sort", message: "", preferredStyle: .alert)
+            sortAlert.addAction(UIAlertAction(title: "Default", style: .default, handler: { _ in
+                if let directory = self.searchDirectory { self.directory = self.sort(directory, by: .noneSpecified) }
+                guard !(self.directory?.isEmpty() ?? false) else {
+                    self.noResultsLabel.isHidden = false
+                    self.tableView.isHidden = true
+                    return
+                }
+                self.tableView.isHidden = false
+                self.tableView.reloadData()
+            }))
+
             sortAlert.addAction(UIAlertAction(title: "Team", style: .default, handler: { _ in
                 if let directory = self.searchDirectory { self.directory = self.sort(directory, by: .team) }
                 guard !(self.directory?.isEmpty() ?? false) else {
@@ -230,27 +242,8 @@ extension ViewController {
                 self.tableView.isHidden = false
                 self.tableView.reloadData()
             }))
-            sortAlert.addAction(UIAlertAction(title: "Email Address", style: .default, handler: { _ in
-                if let directory = self.searchDirectory { self.directory = self.sort(directory, by: .email) }
-                guard !(self.directory?.isEmpty() ?? false) else {
-                    self.noResultsLabel.isHidden = false
-                    self.tableView.isHidden = true
-                    return
-                }
-                self.tableView.isHidden = false
-                self.tableView.reloadData()
-            }))
-            sortAlert.addAction(UIAlertAction(title: "UUID", style: .default, handler: { _ in
-                if let directory = self.searchDirectory { self.directory = self.sort(directory, by: .uuid) }
-                guard !(self.directory?.isEmpty() ?? false) else {
-                    self.noResultsLabel.isHidden = false
-                    self.tableView.isHidden = true
-                    return
-                }
-                self.tableView.isHidden = false
-                self.tableView.reloadData()
-            }))
-            sortAlert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+            
+            sortAlert.addAction(UIAlertAction(title: "Dismiss", style: .destructive, handler: nil))
 
             self.present(sortAlert, animated: true, completion: nil)
             return
@@ -275,11 +268,13 @@ extension ViewController {
 }
 
 //MARK: - Refresh Control
+
 extension ViewController {
     @objc private func refreshDirectory(_ sender: Any) {
         self.fetchData(with: .directory)
     }
 }
+
 //MARK: - SearchBar Delegate
 
 extension ViewController: UISearchBarDelegate {
