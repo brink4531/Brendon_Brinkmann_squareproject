@@ -19,4 +19,5 @@ public enum Field {
     case team
     case firstName
     case lastName
+    case phoneNumber
 }
