@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     
     private let refreshControl: UIRefreshControl = UIRefreshControl()
 
-    //MARK: - TODO: Sort Bttn, Empty List View, slow launch (fetching images and loading cells), test cases, resign first responder to keyboard
+    //MARK: - TODO: slow launch (fetching images and loading cells), test cases
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +32,7 @@ class ViewController: UIViewController {
         self.searchBar.delegate = self
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        self.setupKeyboard()
         
         self.noResultsLabel.isHidden = true
         
@@ -291,6 +292,20 @@ extension ViewController: UISearchBarDelegate {
         }
         self.tableView.isHidden = false
         self.tableView.reloadData()
+    }
+    
+    func setupKeyboard() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(_:)))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard(_ sender: UITapGestureRecognizer) {
+        view.endEditing(true)
+
+        if let nav = self.navigationController {
+            nav.view.endEditing(true)
+        }
     }
 }
 
