@@ -21,17 +21,9 @@ class ViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var searchBar: UISearchBar!
     
-    
-    @IBOutlet var headShot: UIImageView!
-    @IBOutlet var fullName: UILabel!
-    @IBOutlet var team: UILabel!
-    @IBOutlet var employeeType: UILabel!
-    @IBOutlet var email: UILabel!
-    @IBOutlet var cellPhone: UILabel!
-    @IBOutlet var biography: UILabel!
+    private let refreshControl: UIRefreshControl = UIRefreshControl()
 
-    
-    //MARK: - TODO: Pull to refresh (or reset button), Sort Bttn, Loading Animation, Empty List View
+    //MARK: - TODO: Sort Bttn, Empty List View, slow launch (fetching images and loading cells), test cases, resign first responder to keyboard
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,41 +32,49 @@ class ViewController: UIViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
-        self.headShot.layer.cornerRadius = self.headShot.frame.size.width / 2
-        self.headShot.clipsToBounds = true
-
-        DispatchQueue.main.async { self.alert(launch: true) }
+        self.setupRefreshControl()
+        DispatchQueue.main.async { self.fetchData(with: .directory) }
     }
 }
 
 //MARK: - Helper Functions
 
 extension ViewController {
-    func updateUserInfoSheet(employee: Employee, at index: Int) {
-        self.fullName.text = employee.full_name
-        self.team.text = employee.team
-        self.employeeType.text = "- " + (employee.employee_type == "FULL_TIME" ? "Full Time" : employee.employee_type == "PART_TIME" ? "Part Time" : "Contractor")
-        self.email.text = "- " + employee.email_address
-        self.biography.text = "- " + employee.biography
-        self.cellPhone.text = "- " + employee.phone_number
-        
-        if let image = self.imageCache[index] {
-            self.headShot.image = image
+    func setupRefreshControl() {
+        if #available(iOS 10.0, *) { self.tableView.refreshControl = self.refreshControl }
+        else { self.tableView.addSubview(self.refreshControl) }
+        self.refreshControl.addTarget(self, action: #selector(refreshDirectory(_:)), for: .valueChanged)
+    }
+
+    func updateTableViewCell(cell: UITableViewCell, employee: Employee, at index: IndexPath) {
+        if let image = self.imageCache[index.row] {
+            if let imageView = cell.contentView.subviews.first as? UIImageView {
+                imageView.image = image
+                imageView.layer.cornerRadius = imageView.frame.size.width / 2
+                imageView.clipsToBounds = true
+                imageView.layer.borderWidth = 2.0
+                imageView.layer.borderColor = UIColor.tertiarySystemBackground.cgColor
+            }
         } else { self.addImageToCache(employee.photo_url_small, at: index) }
-        
-        self.headShot.layer.borderWidth = 3.0
-        self.headShot.layer.borderColor = self.fullName.textColor.cgColor
     }
     
-    func addImageToCache(_ employeeUrl: String, at index: Int) {
+    func addImageToCache(_ employeeUrl: String, at index: IndexPath) {
         guard let url = URL(string: employeeUrl) else { return }
         
         DispatchQueue.main.async { [weak self] in
             guard let strongSelf = self else { return }
             guard let imageData = try? Data(contentsOf: url) else { return }
             guard let loadedImage  = UIImage(data: imageData) else { return }
-            strongSelf.headShot.image = loadedImage
-            strongSelf.imageCache.updateValue(loadedImage, forKey: index)
+            guard let cell = strongSelf.tableView.cellForRow(at: index) else { return }
+            if let imageView = cell.contentView.subviews.first as? UIImageView {
+                imageView.image = loadedImage
+                imageView.layer.cornerRadius = imageView.frame.size.width / 2
+                imageView.clipsToBounds = true
+                imageView.layer.borderWidth = 2.0
+                imageView.layer.borderColor = UIColor.tertiarySystemBackground.cgColor
+            }
+            strongSelf.imageCache.updateValue(loadedImage, forKey: index.row)
+            strongSelf.tableView.reloadData()
         }
     }
     
@@ -84,8 +84,7 @@ extension ViewController {
         
         self.tableView.reloadData()
         
-        let url = urlType == .directory ? self.directoryURL : urlType == .empty ? self.emptyURL : self.malformedURL
-        AF.request(url).response { response in
+        AF.request(self.directoryURL).response { response in
             guard response.error == nil else { self.alert(); return } // Alert Message
             guard let data = response.data else { self.alert(); return } // Alert Message
             guard let directory = try? JSONDecoder().decode(Directory.self, from: data) else { self.alert(); return } // Alert Message
@@ -93,10 +92,9 @@ extension ViewController {
             
             self.directory = directory
             self.searchDirectory = directory
-            
-            if !directory.isEmpty(), let employee = directory.employee(at: 0) { self.updateUserInfoSheet(employee: employee, at: 0) }
-            
+
             self.tableView.reloadData()
+            DispatchQueue.main.async { self.refreshControl.endRefreshing() }
         }
     }
     
@@ -158,47 +156,61 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell = self.tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        if let directory = self.directory {
-            cell.textLabel?.text = directory.employees[indexPath.row].full_name
+        if let directory = self.directory, let employee = directory.employee(at: indexPath.row) {
+            self.updateTableViewCell(cell: cell, employee: employee, at: indexPath)
+            if let label = cell.contentView.subviews[1] as? UILabel { label.text = employee.full_name }
         }
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let directory = self.directory, let employee = directory.employee(at: indexPath.row) { self.updateUserInfoSheet(employee: employee, at: indexPath.row) }
+        self.alert(employeeCard: indexPath.row)
     }
 }
 
 //MARK: - Alert Controller
 
 extension ViewController {
-    func alert(launch: Bool = false, errorType: UrlType = .malformed) {
-        guard !launch else {
-            let launchAlert = UIAlertController(title: "Launch", message: "", preferredStyle: .alert)
+    func alert(sort: Bool = false, employeeCard: Int? = nil, errorType: UrlType = .malformed) {
+        guard !sort else {
+            let sortAlert = UIAlertController(title: "Sort", message: "", preferredStyle: .alert)
             
-            launchAlert.addAction(UIAlertAction(title: "DirectoryURL", style: .default, handler: { _ in self.fetchData(with: .directory) }))
-            launchAlert.addAction(UIAlertAction(title: "MalformedURL", style: .default, handler: { _ in self.fetchData(with: .malformed) }))
-            launchAlert.addAction(UIAlertAction(title: "EmptyURL", style: .default, handler: { _ in self.fetchData(with: .empty) }))
-            
-            self.present(launchAlert, animated: true, completion: nil)
+            sortAlert.addAction(UIAlertAction(title: "Team", style: .default, handler: { _ in self.fetchData(with: .directory) }))
+            sortAlert.addAction(UIAlertAction(title: "Full Name", style: .default, handler: { _ in self.fetchData(with: .malformed) }))
+            sortAlert.addAction(UIAlertAction(title: "Phone Number", style: .default, handler: { _ in self.fetchData(with: .malformed) }))
+            sortAlert.addAction(UIAlertAction(title: "Email Address", style: .default, handler: { _ in self.fetchData(with: .malformed) }))
+            sortAlert.addAction(UIAlertAction(title: "UUID", style: .default, handler: { _ in self.fetchData(with: .malformed) }))
+            sortAlert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+
+            self.present(sortAlert, animated: true, completion: nil)
+            return
+        }
+        
+        guard employeeCard == nil else {
+            if let directory = self.directory, let employee = directory.employee(at: employeeCard!) {
+                let employeeAlert = UIAlertController(title: "\(employee.full_name)", message: "Team: \(employee.team)\nPhone Number: \(employee.phone_number)\nEmployee Type: \(employee.employee_type == "FULL_TIME" ? "Full Time" : employee.employee_type == "PART_TIME" ? "Part Time" : "Contractor")\n Email: \(employee.email_address)\nBio: \(employee.biography)", preferredStyle: .alert)
+                
+                employeeAlert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+                
+                self.present(employeeAlert, animated: true, completion: nil)
+            }
             return
         }
         
         let alert = UIAlertController(title: "Error", message: errorType == .malformed ? "Unable to fetch results, malformed data" : "Empty response", preferredStyle: .alert)
-        let retryAlert = UIAlertController(title: "Retry", message: "", preferredStyle: .alert)
-        
-        retryAlert.addAction(UIAlertAction(title: "DirectoryURL", style: .default, handler: { _ in self.fetchData(with: .directory) }))
-        retryAlert.addAction(UIAlertAction(title: "MalformedURL", style: .default, handler: { _ in self.fetchData(with: .malformed) }))
-        retryAlert.addAction(UIAlertAction(title: "EmptyURL", style: .default, handler: { _ in self.fetchData(with: .empty) }))
-        
-        alert.addAction(UIAlertAction(title: "Retry", style: .default, handler: { _ in self.present(retryAlert, animated: true, completion: nil) }))
+        alert.addAction(UIAlertAction(title: "Retry", style: .default, handler: { _ in self.fetchData(with: .directory) }))
         
         self.present(alert, animated: true, completion: nil)
     }
 }
 
-
+//MARK: - Refresh Control
+extension ViewController {
+    @objc private func refreshDirectory(_ sender: Any) {
+        self.fetchData(with: .directory)
+    }
+}
 //MARK: - SearchBar Delegate
 
 extension ViewController: UISearchBarDelegate {
@@ -212,7 +224,7 @@ extension ViewController: UISearchBarDelegate {
 
 extension ViewController {
     @IBAction func buttonPressed(_ sender: Any) {
-        DispatchQueue.main.async { self.alert(launch: true) }
+        DispatchQueue.main.async { self.alert(sort: true) }
     }
 }
 
