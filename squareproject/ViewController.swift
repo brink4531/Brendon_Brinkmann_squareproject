@@ -168,8 +168,6 @@ class ViewController: UIViewController,UITableViewDelegate, UITableViewDataSourc
     //MARK: - SearchBar Delegate
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print(searchText)
-        
         if let directory = self.searchDirectory { self.directory = self.search(directory, by: searchText) }
         self.tableView.reloadData()
     }
@@ -223,7 +221,7 @@ class ViewController: UIViewController,UITableViewDelegate, UITableViewDataSourc
             $0.photo_url_small.lowercased().contains(searchText.lowercased()) ||
             $0.photo_url_large.lowercased().contains(searchText.lowercased()) ||
             $0.team.lowercased().contains(searchText.lowercased()) ||
-            $0.employee_type.lowercased().contains(searchText.lowercased())
+            $0.employee_type.lowercased().replacingOccurrences(of: "_", with: " ").contains(searchText.lowercased())
         }
 
         var directory: Directory = Directory()
