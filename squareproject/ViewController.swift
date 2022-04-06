@@ -50,35 +50,21 @@ extension ViewController {
         self.refreshControl.addTarget(self, action: #selector(refreshDirectory(_:)), for: .valueChanged)
     }
 
-    func updateTableViewCell(cell: UITableViewCell, employee: Employee, at index: IndexPath) {
-        if let image = self.imageCache[index.row] {
-            if let imageView = cell.contentView.subviews.first as? UIImageView {
-                imageView.image = image
-                imageView.layer.cornerRadius = imageView.frame.size.width / 2
-                imageView.clipsToBounds = true
-                imageView.layer.borderWidth = 2.0
-                imageView.layer.borderColor = UIColor.tertiarySystemBackground.cgColor
-            }
-        } else { self.addImageToCache(employee.photo_url_small, at: index) }
+    func imageForCell(employee: Employee, at index: IndexPath, completion: @escaping CompletionHandler) {
+        if let image = self.imageCache[index.row], let image = image {
+            completion(image)
+        } else { self.addImageToCache(employee.photo_url_small, at: index, completion: completion) }
     }
     
-    func addImageToCache(_ employeeUrl: String, at index: IndexPath) {
+    func addImageToCache(_ employeeUrl: String, at index: IndexPath, completion: @escaping CompletionHandler) {
         guard let url = URL(string: employeeUrl) else { return }
         
         DispatchQueue.main.async { [weak self] in
             guard let strongSelf = self else { return }
             guard let imageData = try? Data(contentsOf: url) else { return }
             guard let loadedImage  = UIImage(data: imageData) else { return }
-            guard let cell = strongSelf.tableView.cellForRow(at: index) else { return }
-            if let imageView = cell.contentView.subviews.first as? UIImageView {
-                imageView.image = loadedImage
-                imageView.layer.cornerRadius = imageView.frame.size.width / 2
-                imageView.clipsToBounds = true
-                imageView.layer.borderWidth = 2.0
-                imageView.layer.borderColor = UIColor.tertiarySystemBackground.cgColor
-            }
             strongSelf.imageCache.updateValue(loadedImage, forKey: index.row)
-            strongSelf.tableView.reloadData()
+            completion(loadedImage)
         }
     }
     
@@ -112,8 +98,6 @@ extension ViewController {
             $0.full_name.lowercased().contains(searchText.lowercased()) ||
             $0.phone_number.lowercased().contains(searchText.lowercased()) ||
             $0.email_address.lowercased().contains(searchText.lowercased()) ||
-            $0.photo_url_small.lowercased().contains(searchText.lowercased()) ||
-            $0.photo_url_large.lowercased().contains(searchText.lowercased()) ||
             $0.team.lowercased().contains(searchText.lowercased()) ||
             $0.employee_type.lowercased().replacingOccurrences(of: "_", with: " ").contains(searchText.lowercased())
         }
@@ -163,8 +147,21 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell = self.tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         if let directory = self.directory, let employee = directory.employee(at: indexPath.row) {
-            self.updateTableViewCell(cell: cell, employee: employee, at: indexPath)
-            if let label = cell.contentView.subviews[1] as? UILabel { label.text = employee.full_name }
+            if let imageView = cell.contentView.subviews.first as? UIImageView {
+                imageView.backgroundColor = .secondarySystemBackground
+                
+                self.imageForCell(employee: employee, at: indexPath) { image in
+                    imageView.backgroundColor = .clear
+                    imageView.image = image
+                }
+                
+                imageView.layer.cornerRadius = imageView.frame.size.width / 2
+                imageView.clipsToBounds = true
+                imageView.layer.borderWidth = 2.0
+                imageView.layer.borderColor = UIColor.tertiarySystemBackground.cgColor
+            }
+
+            if let label = cell.contentView.subviews.last as? UILabel { label.text = employee.full_name }
         }
         
         return cell
@@ -326,3 +323,4 @@ extension ViewController {
 //    )
 //]
 //search [squareproject.Directory.Employee(uuid: "a98f8a2e-c975-4ba3-8b35-01f719e7de2d", full_name: "Camille Rogers", phone_number: "5558531970", email_address: "crogers.demo@squareup.com", biography: "Designer on the web marketing team.", photo_url_small: "https://s3.amazonaws.com/sq-mobile-interview/photos/5095a907-abc9-4734-8d1e-0eeb2506bfa8/small.jpg", photo_url_large: "https://s3.amazonaws.com/sq-mobile-interview/photos/5095a907-abc9-4734-8d1e-0eeb2506bfa8/large.jpg", team: "Public Web & Marketing", employee_type: "PART_TIME"), squareproject.Directory.Employee(uuid: "b8cf3382-ecf2-4240-b8ab-007688426e8c", full_name: "Richard Stein", phone_number: "5557223332", email_address: "rstein.demo@squareup.com", biography: "Product manager for the Point of sale app!", photo_url_small: "https://s3.amazonaws.com/sq-mobile-interview/photos/43ed39b3-fbc0-4eb8-8ed3-6a8de479a52a/small.jpg", photo_url_large: "https://s3.amazonaws.com/sq-mobile-interview/photos/43ed39b3-fbc0-4eb8-8ed3-6a8de479a52a/large.jpg", team: "Point of Sale", employee_type: "PART_TIME"), squareproject.Directory.Employee(uuid: "61b21d34-5499-401a-98b3-16f26e645d54", full_name: "Alaina Daly", phone_number: "5555442937", email_address: "adaly.demo@squareup.com", biography: "Product marketing manager for the Retail Point of Sale app in New York.", photo_url_small: "https://s3.amazonaws.com/sq-mobile-interview/photos/57bc7ed2-5f9e-4814-a7df-dea85c2ed97f/small.jpg", photo_url_large: "https://s3.amazonaws.com/sq-mobile-interview/photos/57bc7ed2-5f9e-4814-a7df-dea85c2ed97f/large.jpg", team: "Retail", employee_type: "FULL_TIME"), squareproject.Directory.Employee(uuid: "b6dea526-c571-4d43-8b41-375ca5cd9fdb", full_name: "Elisa Rizzo", phone_number: "5552234497", email_address: "erizzo.demo@squareup.com", biography: "iOS Engineer on the Restaurants team.", photo_url_small: "https://s3.amazonaws.com/sq-mobile-interview/photos/8ab10188-74d0-4843-9eb2-1938571f6830/small.jpg", photo_url_large: "https://s3.amazonaws.com/sq-mobile-interview/photos/8ab10188-74d0-4843-9eb2-1938571f6830/large.jpg", team: "Restaurants", employee_type: "FULL_TIME"), squareproject.Directory.Employee(uuid: "8623ba77-9d6a-4bcd-bd91-e19ae2c9dba2", full_name: "Ryan Gehani", phone_number: "5554047710", email_address: "rgehani.demo@squareup.com", biography: "Product manager for Invoices!", photo_url_small: "https://s3.amazonaws.com/sq-mobile-interview/photos/7959987e-0d64-4bf6-8b9e-da78deac3457/small.jpg", photo_url_large: "https://s3.amazonaws.com/sq-mobile-interview/photos/7959987e-0d64-4bf6-8b9e-da78deac3457/large.jpg", team: "Invoices", employee_type: "FULL_TIME"), squareproject.Directory.Employee(uuid: "7fb13023-d013-41ac-84f1-e554890ccb32", full_name: "Tim Nakamura", phone_number: "5557510409", email_address: "tnakamura.demo@squareup.com", biography: "Hardware packaging designer on the hardware team, working from LA.", photo_url_small: "https://s3.amazonaws.com/sq-mobile-interview/photos/e2b088e6-0b8d-4295-a66c-d7181cdec3d6/small.jpg", photo_url_large: "https://s3.amazonaws.com/sq-mobile-interview/photos/e2b088e6-0b8d-4295-a66c-d7181cdec3d6/large.jpg", team: "Hardware", employee_type: "CONTRACTOR")] by: R
+typealias CompletionHandler = (_ image: UIImage) -> Void
