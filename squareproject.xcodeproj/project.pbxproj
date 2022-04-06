@@ -107,7 +107,7 @@
 		185B808827FCEA1C00784A6A /* squareproject */ = {
 			isa = PBXGroup;
 			children = (
-				18EC92F327FD4774004D65BC /* DataTypes */,
+				18EC92F327FD4774004D65BC /* Models */,
 				185B808927FCEA1C00784A6A /* AppDelegate.swift */,
 				185B808B27FCEA1C00784A6A /* SceneDelegate.swift */,
 				185B808D27FCEA1C00784A6A /* ViewController.swift */,
@@ -136,14 +136,14 @@
 			path = squareprojectUITests;
 			sourceTree = "<group>";
 		};
-		18EC92F327FD4774004D65BC /* DataTypes */ = {
+		18EC92F327FD4774004D65BC /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				18EC92F427FD478D004D65BC /* Directory.swift */,
 				18EC92F627FD48CC004D65BC /* Employee.swift */,
 				18EC92F827FD48E2004D65BC /* Enums.swift */,
 			);
-			path = DataTypes;
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

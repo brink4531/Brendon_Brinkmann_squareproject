@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     
     private let refreshControl: UIRefreshControl = UIRefreshControl()
 
-    //MARK: - TODO: slow launch (fetching images and loading cells), test cases
+    //MARK: - TODO: slow launch (fetching images and loading cells) *almost fixed, test cases
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -140,7 +140,7 @@ extension ViewController {
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let count = directory?.employees.count else { return 0 } // alert
+        guard let count = directory?.employees.count else { return 0 }
         return count
     }
     
