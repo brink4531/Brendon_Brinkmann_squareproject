@@ -23,6 +23,22 @@
                                 </constraints>
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jXE-QY-iZE">
+                                <rect key="frame" x="0.0" y="183" width="414" height="679"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Results Found" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ArP-IE-GiI">
+                                        <rect key="frame" x="116" y="315" width="182" height="29"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="ArP-IE-GiI" firstAttribute="top" secondItem="jXE-QY-iZE" secondAttribute="top" constant="315" id="npb-er-DtM"/>
+                                    <constraint firstItem="ArP-IE-GiI" firstAttribute="centerX" secondItem="jXE-QY-iZE" secondAttribute="centerX" id="z98-cq-ELC"/>
+                                </constraints>
+                            </view>
                             <navigationBar contentMode="scaleToFill" largeTitles="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jid-Bt-EFg">
                                 <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                                 <items>
@@ -77,9 +93,13 @@
                             <constraint firstItem="qgx-Zn-ebV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="FOt-Qq-AkD"/>
                             <constraint firstItem="Jid-Bt-EFg" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="JPw-ux-zWe"/>
                             <constraint firstItem="Jid-Bt-EFg" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Jex-rP-BWy"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="jXE-QY-iZE" secondAttribute="trailing" id="ZPR-ps-sh6"/>
                             <constraint firstItem="5Pf-g8-heh" firstAttribute="top" secondItem="Jid-Bt-EFg" secondAttribute="bottom" id="aRK-Sh-ITv"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="jXE-QY-iZE" secondAttribute="bottom" id="eT4-ok-bvU"/>
                             <constraint firstItem="5Pf-g8-heh" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="jeb-D8-giv"/>
+                            <constraint firstItem="jXE-QY-iZE" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="krd-bc-eEw"/>
                             <constraint firstItem="5Pf-g8-heh" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="mD4-um-azJ"/>
+                            <constraint firstItem="jXE-QY-iZE" firstAttribute="top" secondItem="5Pf-g8-heh" secondAttribute="bottom" constant="-1" id="oKA-bt-d2x"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="qgx-Zn-ebV" secondAttribute="bottom" id="oMG-pE-kQj"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="qgx-Zn-ebV" secondAttribute="trailing" id="qaf-Qt-aup"/>
                             <constraint firstItem="Jid-Bt-EFg" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="sSW-X7-iZK"/>
@@ -87,6 +107,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="noResultsLabel" destination="jXE-QY-iZE" id="BGJ-i0-Zdy"/>
                         <outlet property="searchBar" destination="5Pf-g8-heh" id="ryF-WB-AhL"/>
                         <outlet property="tableView" destination="qgx-Zn-ebV" id="maJ-V9-qRW"/>
                     </connections>

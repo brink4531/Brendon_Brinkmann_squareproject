@@ -20,6 +20,7 @@ class ViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var searchBar: UISearchBar!
+    @IBOutlet var noResultsLabel: UIView!
     
     private let refreshControl: UIRefreshControl = UIRefreshControl()
 
@@ -31,6 +32,8 @@ class ViewController: UIViewController {
         self.searchBar.delegate = self
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        
+        self.noResultsLabel.isHidden = true
         
         self.setupRefreshControl()
         DispatchQueue.main.async { self.fetchData(with: .directory) }
@@ -216,6 +219,12 @@ extension ViewController {
 extension ViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if let directory = self.searchDirectory { self.directory = self.search(directory, by: searchText) }
+        guard !(self.directory?.isEmpty() ?? false) else {
+            self.noResultsLabel.isHidden = false
+            self.tableView.isHidden = true
+            return
+        }
+        self.tableView.isHidden = false
         self.tableView.reloadData()
     }
 }
