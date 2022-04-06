@@ -241,17 +241,6 @@ extension ViewController {
                 self.tableView.isHidden = false
                 self.tableView.reloadData()
             }))
-            sortAlert.addAction(UIAlertAction(title: "Phone Number", style: .default, handler: { _ in
-                if let directory = self.directory { self.directory = self.sort(directory, by: .phoneNumber) }
-                guard !(self.directory?.isEmpty() ?? false) else {
-                    self.noResultsLabel.isHidden = false
-                    self.tableView.isHidden = true
-                    return
-                }
-                self.tableView.isHidden = false
-                self.tableView.reloadData()
-            }))
-            
             sortAlert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
 
             self.present(sortAlert, animated: true, completion: nil)
