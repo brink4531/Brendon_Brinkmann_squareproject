@@ -24,8 +24,6 @@ class ViewController: UIViewController {
     @IBOutlet var noResultsLabel: UIView!
     
     private let refreshControl: UIRefreshControl = UIRefreshControl()
-
-    //MARK: - TODO: test cases
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,9 +74,9 @@ extension ViewController {
         self.tableView.reloadData()
         
         AF.request(self.directoryURL).response { response in
-            guard response.error == nil else { self.alert(); return } // Alert Message
-            guard let data = response.data else { self.alert(); return } // Alert Message
-            guard let directory = try? JSONDecoder().decode(Directory.self, from: data) else { self.alert(); return } // Alert Message
+            guard response.error == nil else { self.alert(); return }
+            guard let data = response.data else { self.alert(); return }
+            guard let directory = try? JSONDecoder().decode(Directory.self, from: data) else { self.alert(); return }
             guard !directory.isEmpty() else { self.alert(errorType: .empty); return }
             
             self.directory = directory
