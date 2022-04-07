@@ -4,7 +4,7 @@
 - iPad Air 5th Gen - iOS 15.4 
 
 ## Steps to run the app
-- Drag 'squareproject' app file onto an iPhone/iPad simulator
+- Drag the 'squareproject.app' file onto an iPhone/iPad simulator
 
 ## What areas of the app did you focus on?
 - Used Rest API to fetch employee data
