@@ -17,6 +17,7 @@
 		185B80AB27FCEA1D00784A6A /* squareprojectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185B80AA27FCEA1D00784A6A /* squareprojectUITests.swift */; };
 		185B80AD27FCEA1D00784A6A /* squareprojectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185B80AC27FCEA1D00784A6A /* squareprojectUITestsLaunchTests.swift */; };
 		185B80BB27FCF23700784A6A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 185B80BA27FCF23700784A6A /* Alamofire */; };
+		18EA130227FE76FD00251B14 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 18EA130127FE76FD00251B14 /* README.md */; };
 		18EC92F527FD478D004D65BC /* Directory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EC92F427FD478D004D65BC /* Directory.swift */; };
 		18EC92F727FD48CC004D65BC /* Employee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EC92F627FD48CC004D65BC /* Employee.swift */; };
 		18EC92F927FD48E2004D65BC /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EC92F827FD48E2004D65BC /* Enums.swift */; };
@@ -53,6 +54,7 @@
 		185B80A627FCEA1D00784A6A /* squareprojectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = squareprojectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		185B80AA27FCEA1D00784A6A /* squareprojectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = squareprojectUITests.swift; sourceTree = "<group>"; };
 		185B80AC27FCEA1D00784A6A /* squareprojectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = squareprojectUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		18EA130127FE76FD00251B14 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		18EC92F427FD478D004D65BC /* Directory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Directory.swift; sourceTree = "<group>"; };
 		18EC92F627FD48CC004D65BC /* Employee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Employee.swift; sourceTree = "<group>"; };
 		18EC92F827FD48E2004D65BC /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 		185B807D27FCEA1C00784A6A = {
 			isa = PBXGroup;
 			children = (
+				18EA130127FE76FD00251B14 /* README.md */,
 				185B808827FCEA1C00784A6A /* squareproject */,
 				185B809F27FCEA1D00784A6A /* squareprojectTests */,
 				185B80A927FCEA1D00784A6A /* squareprojectUITests */,
@@ -258,6 +261,7 @@
 			files = (
 				185B809627FCEA1D00784A6A /* LaunchScreen.storyboard in Resources */,
 				185B809327FCEA1D00784A6A /* Assets.xcassets in Resources */,
+				18EA130227FE76FD00251B14 /* README.md in Resources */,
 				185B809127FCEA1C00784A6A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
