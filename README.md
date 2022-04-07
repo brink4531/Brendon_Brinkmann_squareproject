@@ -9,12 +9,12 @@
 ## What areas of the app did you focus on?
 - Used Rest API to fetch employee data
 - Displayed a list of employees
-- Added a searchbar to search for `Full Name`, `Team`, `Employee Type`, `Phone Number`, `Bio`, and `Email`
-- Added a sort button to sort by `Default`, `Team`, `First Name`, `Last Name`, and `Employee Type`
-- Used a "pull to refresh" gesture
+- Added a searchbar to search for `First Name` and `Last Name`
+- Added a sort button to sort by `Team`, `First Name`, `Last Name`, and `Employee Type`
+- Added a `pull to refresh` gesture
 - Added a tap gesture to employee cells that displays an employee card
-- Showed a `No Results Found` screen when searching for employees
-- Cached employee image's
+- Added a `No Results Found` screen when searching for employees
+- Cached employee image's locally
 
 ## What was the reason for your focus? What problems were you trying to solve?
 - Keeping the app's UI/UX user friendly

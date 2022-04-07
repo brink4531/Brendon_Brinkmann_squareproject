@@ -50,7 +50,7 @@ class squareprojectUITests: XCTestCase {
         let searchBar = app.searchFields.firstMatch
         XCTAssertTrue(searchBar.waitForExistence(timeout: 5.0))
         searchBar.tap()
-        searchBar.typeText("Part Time")
+        searchBar.typeText("Justine")
         app.staticTexts["Directory"].tap()
         XCTAssertTrue(app.tables.firstMatch.exists)
         let list = app.tables.firstMatch
@@ -75,7 +75,7 @@ class squareprojectUITests: XCTestCase {
         let searchBar = app.searchFields.firstMatch
         XCTAssertTrue(searchBar.waitForExistence(timeout: 5.0))
         searchBar.tap()
-        searchBar.typeText("Sample No Results")
+        searchBar.typeText("John Appleseed")
         app.staticTexts["Directory"].tap()
         XCTAssertTrue(app.staticTexts["No Results Found"].exists)
     }
@@ -87,36 +87,6 @@ class squareprojectUITests: XCTestCase {
         XCTAssertTrue(searchBar.waitForExistence(timeout: 5.0))
         searchBar.tap()
         searchBar.typeText("Justine")
-        XCTAssertTrue(app.staticTexts["Justine Mason"].exists)
-    }
-    
-    func testSearchFullTime() {
-        app.launch()
-        XCTAssertTrue(app.searchFields.firstMatch.exists)
-        let searchBar = app.searchFields.firstMatch
-        XCTAssertTrue(searchBar.waitForExistence(timeout: 5.0))
-        searchBar.tap()
-        searchBar.typeText("Full Time")
-        XCTAssertTrue(app.staticTexts["Alaina Daly"].exists)
-    }
-    
-    func testSearchEmployeeType() {
-        app.launch()
-        XCTAssertTrue(app.searchFields.firstMatch.exists)
-        let searchBar = app.searchFields.firstMatch
-        XCTAssertTrue(searchBar.waitForExistence(timeout: 5.0))
-        searchBar.tap()
-        searchBar.typeText("Part Time")
-        XCTAssertTrue(app.staticTexts["Camille Rogers"].exists)
-    }
-    
-    func testSearchTeam() {
-        app.launch()
-        XCTAssertTrue(app.searchFields.firstMatch.exists)
-        let searchBar = app.searchFields.firstMatch
-        XCTAssertTrue(searchBar.waitForExistence(timeout: 5.0))
-        searchBar.tap()
-        searchBar.typeText("Point of Sale")
         XCTAssertTrue(app.staticTexts["Justine Mason"].exists)
     }
     
@@ -161,24 +131,14 @@ class squareprojectUITests: XCTestCase {
         app.alerts["Sort"].buttons["Employee Type"].tap()
     }
     
-    func testSortDefault() {
+    func testSortReset() {
         app.launch()
         XCTAssertTrue(app.searchFields.firstMatch.exists)
         let sortButton = app.buttons["Sort"]
         XCTAssertTrue(sortButton.waitForExistence(timeout: 5.0))
         sortButton.tap()
         
-        app.alerts["Sort"].buttons["Default"].tap()
-    }
-    
-    func testSortDismiss() {
-        app.launch()
-        XCTAssertTrue(app.searchFields.firstMatch.exists)
-        let sortButton = app.buttons["Sort"]
-        XCTAssertTrue(sortButton.waitForExistence(timeout: 5.0))
-        sortButton.tap()
-        
-        app.alerts["Sort"].buttons["Dismiss"].tap()
+        app.alerts["Sort"].buttons["Reset"].tap()
     }
     
     //MARK: - Employee Taps
@@ -211,28 +171,6 @@ class squareprojectUITests: XCTestCase {
         list.cells.staticTexts["Justine Mason"].tap()
 
         let alert = app.alerts["Justine Mason"]
-        XCTAssertTrue(alert.exists)
-        XCTAssertTrue(alert.staticTexts.firstMatch.exists)
-        alert.buttons["Dismiss"].tap()
-    }
-    
-    func testTapEmployeeAfterTeamSearch() {
-        app.launch()
-        XCTAssertTrue(app.searchFields.firstMatch.exists)
-        let searchBar = app.searchFields.firstMatch
-        XCTAssertTrue(searchBar.waitForExistence(timeout: 5.0))
-        searchBar.tap()
-        searchBar.typeText("Point of Sale")
-        XCTAssertTrue(app.staticTexts["Justine Mason"].exists)
-        XCTAssertTrue(app.staticTexts["Richard Stein"].exists)
-        XCTAssertTrue(app.staticTexts["Michael Morin"].exists)
-
-        XCTAssertTrue(app.tables.firstMatch.exists)
-        let list = app.tables.firstMatch
-        XCTAssertTrue(list.waitForExistence(timeout: 5.0))
-        list.cells.staticTexts["Richard Stein"].tap()
-
-        let alert = app.alerts["Richard Stein"]
         XCTAssertTrue(alert.exists)
         XCTAssertTrue(alert.staticTexts.firstMatch.exists)
         alert.buttons["Dismiss"].tap()
@@ -291,13 +229,4 @@ class squareprojectUITests: XCTestCase {
         XCTAssertTrue(alert.staticTexts.firstMatch.exists)
         alert.buttons["Dismiss"].tap()
     }
-    
-//    func testLaunchPerformance() throws {
-//        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-//            // This measures how long it takes to launch your application.
-//            measure(metrics: [XCTApplicationLaunchMetric()]) {
-//                XCUIApplication().launch()
-//            }
-//        }
-//    }
 }
