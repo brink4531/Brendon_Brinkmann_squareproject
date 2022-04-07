@@ -12,9 +12,9 @@
 - Added a searchbar to search for `Full Name`, `Team`, `Employee Type`, `Phone Number`, `Bio`, and `Email`
 - Added a sort button to sort by `Default`, `Team`, `First Name`, `Last Name`, and `Employee Type`
 - Used a "pull to refresh" gesture
-- Added a tap gesture to employee cells that display an employee card
+- Added a tap gesture to employee cells that displays an employee card
 - Showed a `No Results Found` screen when searching for employees
-- Caching employee image's
+- Cached employee image's
 
 ## What was the reason for your focus? What problems were you trying to solve?
 - Keeping the app's UI/UX user friendly
