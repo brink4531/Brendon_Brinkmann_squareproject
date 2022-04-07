@@ -18,10 +18,10 @@
 
 ## What was the reason for your focus? What problems were you trying to solve?
 - Keeping the app's UI/UX user friendly
-- Give user's the option to search for any value
-- Give user's the option to sort for any value
-- Minimize latency when making Network requests
-- Keep code clean by breaking down code into smaller sections
+- Give user's the ability to search
+- Give user's the ability to sort
+- Minimize latency when making network requests
+- Keep code clean by breaking it down into smaller sections
 
 ## How long did you spend on this project?
 - 6 Hours
