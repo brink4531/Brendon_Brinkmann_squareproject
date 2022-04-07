@@ -1,6 +1,7 @@
 ## Build tools & versions used
 - Xcode 13.3
 - iPhone 13 - iOS 15.4
+- iPad Air 5th Gen - iOS 15.4 
 
 ## Steps to run the app
 - Unzip squareproject.zip folder
@@ -12,7 +13,7 @@
 - Added a searchbar to search for `First Name` and `Last Name`
 - Added a sort button to sort by `Team`, `First Name`, `Last Name`, and `Employee Type`
 - Added a `pull to refresh` gesture
-- Added a tap gesture to employee cells that displays an employee card
+- Added a `tap` gesture to employee cells that displays an employee card
 - Added a `No Results Found` screen when searching for employees
 - Cached employee image's locally
 
