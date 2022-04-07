@@ -32,10 +32,9 @@ class ViewController: UIViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.setupKeyboard()
-        
         self.noResultsLabel.isHidden = true
-        
         self.setupRefreshControl()
+        
         DispatchQueue.main.async { self.fetchData(with: .directory) }
     }
 }
@@ -306,7 +305,7 @@ extension ViewController: UISearchBarDelegate {
     }
 }
 
-// MARK: - Reset Button Delegate
+// MARK: - Sort Button Delegate
 
 extension ViewController {
     @IBAction func buttonPressed(_ sender: Any) {
