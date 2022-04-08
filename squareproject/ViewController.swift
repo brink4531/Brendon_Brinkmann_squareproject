@@ -69,13 +69,11 @@ extension ViewController {
     func fetchData(with urlType: UrlType) {
         self.directory = nil
         self.searchDirectory = nil
-        
         self.tableView.reloadData()
         
-        AF.request(self.directoryURL).response { response in
-            guard response.error == nil else { self.alert(); return }
-            guard let data = response.data else { self.alert(); return }
-            guard let directory = try? JSONDecoder().decode(Directory.self, from: data) else { self.alert(); return }
+        AF.request(self.directoryURL).responseDecodable(of: Directory.self) { response in
+            guard response.error == nil else { self.alert(errorType: .malformed); return }
+            guard let directory = response.value else { self.alert(errorType: .malformed); return }
             guard !directory.isEmpty() else { self.alert(errorType: .empty); return }
             
             self.directory = directory
