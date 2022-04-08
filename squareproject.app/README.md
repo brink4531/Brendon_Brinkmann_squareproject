@@ -4,8 +4,7 @@
 - iPad Air 5th Gen - iOS 15.4 
 
 ## Steps to run the app
-- Unzip squareproject.zip folder
-- Drag 'squareproject' app file onto an iPhone/iPad simulator
+- Drag the 'squareproject.app' file onto an iPhone/iPad simulator
 
 ## What areas of the app did you focus on?
 - Used Rest API to fetch employee data
@@ -32,7 +31,7 @@
 - With more time, I would've liked to update the Rest API to implement inserting a new employee from within the app. 
 
 ## What do you think is the weakest part of your project?
-- TBD?
+- The weakest part would've been working this project without being on a team.
 
 ## Did you copy any code or dependencies? Please make sure to attribute them here!
 - I am using a Swift package dependency called Alamofire.

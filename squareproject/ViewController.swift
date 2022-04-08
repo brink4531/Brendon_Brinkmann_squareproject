@@ -19,6 +19,8 @@ class ViewController: UIViewController {
     var imageCache: [Int:UIImage?] = [:]
     var searchText: String = ""
     
+    typealias CompletionHandler = (_ image: UIImage?) -> Void
+
     @IBOutlet var tableView: UITableView!
     @IBOutlet var searchBar: UISearchBar!
     @IBOutlet var noResultsLabel: UIView!
@@ -58,11 +60,11 @@ extension ViewController {
         guard let url = URL(string: employeeUrl) else { return }
         
         DispatchQueue.main.async { [weak self] in
-            guard let strongSelf = self else { return }
-            guard let imageData = try? Data(contentsOf: url) else { return }
-            guard let loadedImage  = UIImage(data: imageData) else { return }
-            strongSelf.imageCache.updateValue(loadedImage, forKey: index.row)
-            completion(loadedImage)
+            guard let strongSelf = self else { completion(nil); return }
+            guard let imageData = try? Data(contentsOf: url) else { completion(nil); return }
+            guard let image  = UIImage(data: imageData) else { completion(nil); return }
+            strongSelf.imageCache.updateValue(image, forKey: index.row)
+            completion(image)
         }
     }
     
@@ -88,7 +90,6 @@ extension ViewController {
     
     public func search(_ directory: Directory, by searchText: String) -> Directory {
         guard !searchText.isEmpty else { return directory }
-        
         let employees = directory.employees.filter { $0.full_name.lowercased().contains(searchText.lowercased()) }
         
         var directory: Directory = Directory()
@@ -126,6 +127,42 @@ extension ViewController {
     }
 }
 
+//MARK: - SearchBar Delegate
+
+extension ViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.searchText = searchText
+        if let directory = self.searchDirectory {
+            self.directory = self.sort(self.search(directory, by: searchText), by: self.sortType)
+        }
+        guard !(self.directory?.isEmpty() ?? false) else {
+            self.noResultsLabel.isHidden = false
+            self.tableView.isHidden = true
+            return
+        }
+        self.tableView.isHidden = false
+        self.tableView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func setupKeyboard() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(_:)))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard(_ sender: UITapGestureRecognizer) {
+        view.endEditing(true)
+
+        if let nav = self.navigationController {
+            nav.view.endEditing(true)
+        }
+    }
+}
+
 //MARK: - TableView Delegate and DataSource
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
@@ -141,18 +178,17 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                 imageView.backgroundColor = .secondarySystemBackground
                 
                 self.imageForCell(employee: employee, at: indexPath) { image in
-                    imageView.backgroundColor = .clear
-                    imageView.image = image
+                    if let image = image {
+                        imageView.backgroundColor = .clear
+                        imageView.image = image
+                    }
                 }
                 
-                imageView.layer.cornerRadius = imageView.frame.size.width / 2
-                imageView.clipsToBounds = true
-                imageView.layer.borderWidth = 2.0
-                imageView.layer.borderColor = UIColor.tertiarySystemBackground.cgColor
+                imageView.roundImage()
             }
 
-            if let namelabel = cell.contentView.subviews.first(where:  {$0.isMember(of: UILabel.self)}) as? UILabel { namelabel.text = employee.full_name }
-            if let teamlabel = cell.contentView.subviews.last(where:  { $0.isMember(of: UILabel.self)}) as? UILabel { teamlabel.text = employee.team }
+            if let namelabel = cell.contentView.subviews.first(where:  { $0.isMember(of: UILabel.self) }) as? UILabel { namelabel.text = employee.full_name }
+            if let teamlabel = cell.contentView.subviews.last(where:  { $0.isMember(of: UILabel.self) }) as? UILabel { teamlabel.text = employee.team }
         }
         
         return cell
@@ -166,6 +202,22 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 //MARK: - Alert Controller
 
 extension ViewController {
+    func alert(sort: Bool = false, employeeCard: Int? = nil, errorType: UrlType = .malformed) {
+        guard !sort else {
+            self.present(self.sortAlert(), animated: true, completion: nil)
+            return
+        }
+        
+        guard employeeCard == nil else {
+            if let directory = self.directory, let employee = directory.employee(at: employeeCard!) {
+                self.present(self.employeeAlert(employee), animated: true, completion: nil)
+            }
+            return
+        }
+        
+        self.present(self.errorAlert(errorType), animated: true, completion: nil)
+    }
+    
     func sortAlert() -> UIAlertController {
         var message: String = ""
         switch self.sortType {
@@ -233,26 +285,18 @@ extension ViewController {
         return sortAlert
     }
     
-    func alert(sort: Bool = false, employeeCard: Int? = nil, errorType: UrlType = .malformed) {
-        guard !sort else {
-            self.present(self.sortAlert(), animated: true, completion: nil)
-            return
-        }
+    func employeeAlert(_ employee: Employee) -> UIAlertController {
+        let employeeAlert = UIAlertController(title: "\(employee.full_name)", message: "Team: \(employee.team)\nPhone Number: \(employee.phone_number)\nEmployee Type: \(employee.employee_type == "FULL_TIME" ? "Full Time" : employee.employee_type == "PART_TIME" ? "Part Time" : "Contractor")\n Email: \(employee.email_address)\nBio: \(employee.biography)", preferredStyle: .alert)
         
-        guard employeeCard == nil else {
-            if let directory = self.directory, let employee = directory.employee(at: employeeCard!) {
-                let employeeAlert = UIAlertController(title: "\(employee.full_name)", message: "Team: \(employee.team)\nPhone Number: \(employee.phone_number)\nEmployee Type: \(employee.employee_type == "FULL_TIME" ? "Full Time" : employee.employee_type == "PART_TIME" ? "Part Time" : "Contractor")\n Email: \(employee.email_address)\nBio: \(employee.biography)", preferredStyle: .alert)
-                
-                employeeAlert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
-                self.present(employeeAlert, animated: true, completion: nil)
-            }
-            return
-        }
+        employeeAlert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        return employeeAlert
+    }
+    
+    func errorAlert(_ errorType: UrlType) -> UIAlertController {
+        let errorAlert = UIAlertController(title: "Error", message: errorType == .malformed ? "Unable to fetch results, malformed data." : "Unable to fetch results, empty response.", preferredStyle: .alert)
+        errorAlert.addAction(UIAlertAction(title: "Retry", style: .default, handler: { _ in self.fetchData(with: .directory) }))
         
-        let alert = UIAlertController(title: "Error", message: errorType == .malformed ? "Unable to fetch results, malformed data" : "Empty response", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Retry", style: .default, handler: { _ in self.fetchData(with: .directory) }))
-        
-        self.present(alert, animated: true, completion: nil)
+        return errorAlert
     }
 }
 
@@ -268,42 +312,6 @@ extension ViewController {
     }
 }
 
-//MARK: - SearchBar Delegate
-
-extension ViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchText = searchText
-        if let directory = self.searchDirectory {
-            self.directory = self.sort(self.search(directory, by: searchText), by: self.sortType)
-        }
-        guard !(self.directory?.isEmpty() ?? false) else {
-            self.noResultsLabel.isHidden = false
-            self.tableView.isHidden = true
-            return
-        }
-        self.tableView.isHidden = false
-        self.tableView.reloadData()
-    }
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
-    }
-    
-    func setupKeyboard() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(_:)))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-
-    @objc func dismissKeyboard(_ sender: UITapGestureRecognizer) {
-        view.endEditing(true)
-
-        if let nav = self.navigationController {
-            nav.view.endEditing(true)
-        }
-    }
-}
-
 // MARK: - Sort Button Delegate
 
 extension ViewController {
@@ -311,5 +319,3 @@ extension ViewController {
         DispatchQueue.main.async { self.alert(sort: true) }
     }
 }
-
-typealias CompletionHandler = (_ image: UIImage) -> Void

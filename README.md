@@ -31,7 +31,7 @@
 - With more time, I would've liked to update the Rest API to implement inserting a new employee from within the app. 
 
 ## What do you think is the weakest part of your project?
-- The weakest part would've been working this project without being on a team. TBD?
+- The weakest part would've been working this project without being on a team.
 
 ## Did you copy any code or dependencies? Please make sure to attribute them here!
 - I am using a Swift package dependency called Alamofire.
