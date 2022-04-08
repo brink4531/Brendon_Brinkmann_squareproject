@@ -153,7 +153,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                 imageView.layer.borderColor = UIColor.tertiarySystemBackground.cgColor
             }
 
-            if let label = cell.contentView.subviews.last as? UILabel { label.text = employee.full_name }
+            if let namelabel = cell.contentView.subviews.first(where:  {$0.isMember(of: UILabel.self)}) as? UILabel { namelabel.text = employee.full_name }
+            if let teamlabel = cell.contentView.subviews.last(where:  { $0.isMember(of: UILabel.self)}) as? UILabel { teamlabel.text = employee.team }
         }
         
         return cell

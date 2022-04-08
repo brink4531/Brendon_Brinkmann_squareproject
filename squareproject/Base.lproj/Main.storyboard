@@ -74,12 +74,19 @@
                                                     <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="19"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c1J-Wx-1aE">
+                                                    <rect key="frame" x="294" y="15" width="100" height="29"/>
+                                                    <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="10"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="NzK-0D-6W8" firstAttribute="centerY" secondItem="Y5X-jU-AIJ" secondAttribute="centerY" id="1vd-7V-Fxl"/>
                                                 <constraint firstItem="Hl7-AW-Otz" firstAttribute="leading" secondItem="Y5X-jU-AIJ" secondAttribute="leading" constant="20" symbolic="YES" id="4Po-E8-MnN"/>
+                                                <constraint firstItem="c1J-Wx-1aE" firstAttribute="centerY" secondItem="Y5X-jU-AIJ" secondAttribute="centerY" id="9g8-Yc-XvU"/>
                                                 <constraint firstItem="NzK-0D-6W8" firstAttribute="leading" secondItem="Hl7-AW-Otz" secondAttribute="trailing" constant="14" id="Z0D-vg-GWT"/>
                                                 <constraint firstItem="Hl7-AW-Otz" firstAttribute="centerY" secondItem="Y5X-jU-AIJ" secondAttribute="centerY" id="bTf-md-L6E"/>
+                                                <constraint firstAttribute="trailing" secondItem="c1J-Wx-1aE" secondAttribute="trailing" constant="20" symbolic="YES" id="xCz-1I-9UU"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
